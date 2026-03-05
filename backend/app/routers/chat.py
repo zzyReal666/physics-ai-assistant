@@ -23,7 +23,7 @@ class ChatAnswer(BaseModel):
     content: str
     model_used: Optional[str] = None
     from_llm: bool = False
-    references: list[dict[str, str]] = []
+    references: list[dict[str, str]] = Field(default_factory=list)
 
 
 SYSTEM_PROMPT_QA = """
@@ -91,8 +91,7 @@ async def ask_question(
     content = await llm_client.chat(SYSTEM_PROMPT_QA, user_prompt)
     return ChatAnswer(
         content=content,
-        model_used=llm_client.settings.default_llm_model,
+        model_used=llm_client.active_model,
         from_llm=True,
         references=references,
     )
-

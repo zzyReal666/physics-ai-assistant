@@ -126,7 +126,7 @@ async def create_teaching_plan(
         topic=req.topic,
         plan_markdown=md,
         from_llm=True,
-        model_used=llm_client.settings.default_llm_model,
+        model_used=llm_client.active_model,
     )
 
 
