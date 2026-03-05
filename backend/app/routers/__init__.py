@@ -1,0 +1,19 @@
+from fastapi import APIRouter
+
+from . import health, chat, teaching
+
+
+api_router = APIRouter()
+
+# 健康检查
+api_router.include_router(health.router)
+
+# AI 答疑
+api_router.include_router(chat.router, prefix="/api/chat", tags=["chat"])
+
+# AI 备课
+api_router.include_router(teaching.router, prefix="/api/teaching", tags=["teaching"])
+
+
+__all__ = ["api_router"]
+
