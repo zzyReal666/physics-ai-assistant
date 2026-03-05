@@ -23,11 +23,20 @@ class Settings(BaseSettings):
     openai_base_url: str = Field(
         default="https://api.openai.com/v1", alias="OPENAI_BASE_URL"
     )
+    zhipu_api_key: Optional[str] = Field(default=None, alias="ZHIPU_API_KEY")
+    zhipu_base_url: str = Field(
+        default="https://open.bigmodel.cn/api/paas/v4", alias="ZHIPU_BASE_URL"
+    )
 
     default_llm_model: str = Field(
         default="deepseek-chat",
         alias="DEFAULT_LLM_MODEL",
         description="默认使用的大模型名称，例如 deepseek-chat / gpt-4.1",
+    )
+    data_dir: str = Field(
+        default="data",
+        alias="DATA_DIR",
+        description="本地数据目录，包含上传文件和元数据。",
     )
 
     model_config = SettingsConfigDict(
@@ -44,4 +53,3 @@ def get_settings() -> Settings:
 
 
 __all__ = ["Settings", "get_settings"]
-

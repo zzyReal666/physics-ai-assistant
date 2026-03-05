@@ -5,7 +5,8 @@ from typing import Literal, Optional
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel, Field
 
-from app.dependencies import LLMClient, get_llm_client
+from app.dependencies import LLMClient, get_document_store, get_llm_client
+from app.services.document_store import DocumentStore
 
 
 router = APIRouter()
@@ -22,6 +23,7 @@ class ChatAnswer(BaseModel):
     content: str
     model_used: Optional[str] = None
     from_llm: bool = False
+    references: list[dict[str, str]] = []
 
 
 SYSTEM_PROMPT_QA = """
@@ -32,7 +34,7 @@ SYSTEM_PROMPT_QA = """
 """.strip()
 
 
-def _fallback_answer(req: ChatRequest) -> ChatAnswer:
+def _fallback_answer(req: ChatRequest, references: list[dict[str, str]]) -> ChatAnswer:
     """在未配置 LLM 时的简易规则回答，方便本地快速验证链路。"""
     if "牛顿第二定律" in req.question or "F=ma" in req.question:
         content = (
@@ -43,7 +45,7 @@ def _fallback_answer(req: ChatRequest) -> ChatAnswer:
             "3. 代入已知量求出加速度 $a$，注意方向和正负号。\n"
             "4. 可提醒学生：质量 $m$ 一般为常量，加速度与合外力成正比，与质量成反比。"
         )
-        return ChatAnswer(content=content, from_llm=False)
+        return ChatAnswer(content=content, from_llm=False, references=references)
 
     content = (
         "【示例回答（本地规则引擎，未调用真实大模型）】\n\n"
@@ -56,28 +58,41 @@ def _fallback_answer(req: ChatRequest) -> ChatAnswer:
         "3. 结合已知条件化简求解，注意单位与方向。\n"
         "4. 最后进行合理性检查（数量级、方向、极端情况）。"
     )
-    return ChatAnswer(content=content, from_llm=False)
+    return ChatAnswer(content=content, from_llm=False, references=references)
 
 
 @router.post("/ask", response_model=ChatAnswer, summary="AI 物理解题答疑（简化版）")
 async def ask_question(
     req: ChatRequest,
     llm_client: LLMClient = Depends(get_llm_client),
+    store: DocumentStore = Depends(get_document_store),
 ) -> ChatAnswer:
     """AI 答疑入口。
 
     - 若已配置 LLM Key：调用真实大模型给出分步解答；
     - 若未配置：返回内置的“示例解题模板”，方便本地验证。
     """
-    if not llm_client.enabled:
-        return _fallback_answer(req)
+    chunks = await store.retrieve_chunks(req.question, top_k=3)
+    references = [
+        {"source": chunk["filename"], "content": chunk["content"][:180]}
+        for chunk in chunks
+    ]
 
+    if not llm_client.enabled:
+        return _fallback_answer(req, references)
+
+    context = "\n\n".join([f"[{c['filename']}] {c['content']}" for c in chunks]) or "无检索上下文"
     user_prompt = (
         f"学生水平：{'高一' if req.student_level == 'junior' else '高二/高三'}。\n"
+        f"检索上下文：\n{context}\n\n"
         f"请用适合该水平学生的方式，详细解答以下问题：\n\n{req.question}"
     )
 
     content = await llm_client.chat(SYSTEM_PROMPT_QA, user_prompt)
-    return ChatAnswer(content=content, model_used=llm_client.settings.default_llm_model, from_llm=True)
-
+    return ChatAnswer(
+        content=content,
+        model_used=llm_client.settings.default_llm_model,
+        from_llm=True,
+        references=references,
+    )
 

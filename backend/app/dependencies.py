@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+from functools import lru_cache
 from typing import Optional
 
 from fastapi import Depends
 from openai import AsyncOpenAI
 
 from .config import Settings, get_settings
+from .services.document_store import DocumentStore
 
 
 class LLMClient:
@@ -71,5 +73,18 @@ def get_llm_client(settings: Settings = Depends(get_settings_dep)) -> LLMClient:
     return LLMClient(settings)
 
 
-__all__ = ["LLMClient", "get_llm_client", "get_settings_dep"]
+@lru_cache(maxsize=1)
+def _get_document_store_cached(data_dir: str) -> DocumentStore:
+    return DocumentStore(data_dir=data_dir)
 
+
+def get_document_store(settings: Settings = Depends(get_settings_dep)) -> DocumentStore:
+    return _get_document_store_cached(settings.data_dir)
+
+
+__all__ = [
+    "LLMClient",
+    "get_llm_client",
+    "get_settings_dep",
+    "get_document_store",
+]

@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from . import health, chat, teaching
+from . import health, chat, teaching, documents
 
 
 api_router = APIRouter()
@@ -14,6 +14,8 @@ api_router.include_router(chat.router, prefix="/api/chat", tags=["chat"])
 # AI 备课
 api_router.include_router(teaching.router, prefix="/api/teaching", tags=["teaching"])
 
+# 文档管理
+api_router.include_router(documents.router, prefix="/api/documents", tags=["documents"])
+
 
 __all__ = ["api_router"]
-
