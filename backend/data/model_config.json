@@ -1,6 +1,6 @@
 {
   "default_llm_model": "deepseek-chat",
-  "deepseek_api_key": "sk-5e12f071a362400a8f6d58ba315f328f",
+  "deepseek_api_key": "sk-915498cafc3242509e17afa92d0d3f60",
   "deepseek_base_url": "https://api.deepseek.com/v1",
   "openai_api_key": "",
   "openai_base_url": "https://api.openai.com/v1",

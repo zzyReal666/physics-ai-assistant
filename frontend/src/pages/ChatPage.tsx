@@ -1,20 +1,11 @@
 import { Button, Card, Input, message, Select, Space, Tag, Typography } from 'antd';
 import { useState } from 'react';
 import { PageHeader } from '../components/common/PageHeader';
-import { askQuestion } from '../services/api/chat';
-import type { ChatAnswer } from '../types';
-
-interface Msg {
-  role: 'user' | 'assistant';
-  content: string;
-  answer?: ChatAnswer;
-}
+import { useChatSession } from '../stores/chatSession';
 
 export function ChatPage() {
   const [question, setQuestion] = useState('');
-  const [level, setLevel] = useState<'junior' | 'senior'>('senior');
-  const [loading, setLoading] = useState(false);
-  const [messages, setMessages] = useState<Msg[]>([]);
+  const { state, setLevel, sendQuestion, clear } = useChatSession();
 
   const submit = async () => {
     const text = question.trim();
@@ -22,16 +13,8 @@ export function ChatPage() {
       message.warning('请输入问题');
       return;
     }
-
-    setMessages((prev) => [...prev, { role: 'user', content: text }]);
     setQuestion('');
-    setLoading(true);
-    try {
-      const answer = await askQuestion(text, level);
-      setMessages((prev) => [...prev, { role: 'assistant', content: answer.content, answer }]);
-    } finally {
-      setLoading(false);
-    }
+    await sendQuestion(text);
   };
 
   return (
@@ -42,7 +25,7 @@ export function ChatPage() {
           <Space wrap>
             <Typography.Text>学生水平：</Typography.Text>
             <Select
-              value={level}
+              value={state.level}
               style={{ width: 140 }}
               options={[
                 { label: '初中', value: 'junior' },
@@ -57,20 +40,29 @@ export function ChatPage() {
             onChange={(e) => setQuestion(e.target.value)}
             placeholder="例如：质量2kg物体受10N拉力，摩擦系数0.2，求加速度"
           />
-          <Button type="primary" loading={loading} onClick={() => void submit()}>
-            提交问题
-          </Button>
+          <Space>
+            <Button
+              type="primary"
+              loading={state.pendingCount > 0}
+              onClick={() => void submit()}
+            >
+              提交问题
+            </Button>
+            <Button onClick={clear}>清空会话</Button>
+          </Space>
         </Space>
       </Card>
 
       <Card className="glass-card">
-        {messages.length === 0 && <Typography.Text>还没有对话记录。</Typography.Text>}
-        {messages.map((msg, idx) => (
-          <div className={`chat-msg ${msg.role}`} key={`${msg.role}-${idx}`}>
+        {state.messages.length === 0 && <Typography.Text>还没有对话记录。</Typography.Text>}
+        {state.messages.map((msg) => (
+          <div className={`chat-msg ${msg.role}`} key={msg.id}>
             <Typography.Text strong>{msg.role === 'user' ? '你' : 'AI'}：</Typography.Text>
             <Typography.Paragraph style={{ whiteSpace: 'pre-wrap', marginBottom: 8 }}>
               {msg.content}
             </Typography.Paragraph>
+            {msg.status === 'loading' && <Tag color="processing">回答中</Tag>}
+            {msg.status === 'error' && <Tag color="red">失败</Tag>}
             {msg.answer && (
               <Space wrap>
                 <Tag color={msg.answer.from_llm ? 'green' : 'gold'}>
