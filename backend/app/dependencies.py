@@ -19,29 +19,37 @@ class LLMClient:
       上层可根据 `enabled` 字段决定返回“示例回答”。
     """
 
-    def __init__(self, settings: Settings, model_override: str | None = None):
+    def __init__(self, settings: Settings, runtime_config: dict[str, str] | None = None):
         self.settings = settings
-        self.active_model = model_override or settings.default_llm_model
+        cfg = runtime_config or {}
+        self.active_model = cfg.get("default_llm_model") or settings.default_llm_model
 
         self._deepseek_client: Optional[AsyncOpenAI] = None
         self._openai_client: Optional[AsyncOpenAI] = None
         self._zhipu_client: Optional[AsyncOpenAI] = None
 
-        if settings.deepseek_api_key:
+        deepseek_key = cfg.get("deepseek_api_key") or settings.deepseek_api_key
+        deepseek_base_url = cfg.get("deepseek_base_url") or settings.deepseek_base_url
+        openai_key = cfg.get("openai_api_key") or settings.openai_api_key
+        openai_base_url = cfg.get("openai_base_url") or settings.openai_base_url
+        zhipu_key = cfg.get("zhipu_api_key") or settings.zhipu_api_key
+        zhipu_base_url = cfg.get("zhipu_base_url") or settings.zhipu_base_url
+
+        if deepseek_key:
             self._deepseek_client = AsyncOpenAI(
-                api_key=settings.deepseek_api_key,
-                base_url=settings.deepseek_base_url,
+                api_key=deepseek_key,
+                base_url=deepseek_base_url,
             )
 
-        if settings.openai_api_key:
+        if openai_key:
             self._openai_client = AsyncOpenAI(
-                api_key=settings.openai_api_key,
-                base_url=settings.openai_base_url,
+                api_key=openai_key,
+                base_url=openai_base_url,
             )
-        if settings.zhipu_api_key:
+        if zhipu_key:
             self._zhipu_client = AsyncOpenAI(
-                api_key=settings.zhipu_api_key,
-                base_url=settings.zhipu_base_url,
+                api_key=zhipu_key,
+                base_url=zhipu_base_url,
             )
 
     @property
@@ -97,7 +105,7 @@ def get_llm_client(
     settings: Settings = Depends(get_settings_dep),
     model_store: ModelConfigStore = Depends(get_model_config_store),
 ) -> LLMClient:
-    return LLMClient(settings, model_override=model_store.get_model_override())
+    return LLMClient(settings, runtime_config=model_store.get_runtime_config())
 
 
 @lru_cache(maxsize=1)

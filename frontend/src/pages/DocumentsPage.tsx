@@ -1,9 +1,14 @@
 import { InboxOutlined, ReloadOutlined } from '@ant-design/icons';
-import { Button, Card, Drawer, message, Space, Table, Tag, Typography, Upload } from 'antd';
+import { Button, Card, Drawer, Popconfirm, message, Space, Table, Tag, Typography, Upload } from 'antd';
 import type { UploadProps } from 'antd';
 import { useEffect, useState } from 'react';
 import { PageHeader } from '../components/common/PageHeader';
-import { fetchDocumentDetail, fetchDocuments, uploadDocument } from '../services/api/documents';
+import {
+  deleteDocument,
+  fetchDocumentDetail,
+  fetchDocuments,
+  uploadDocument
+} from '../services/api/documents';
 import type { DocumentDetail, DocumentItem } from '../types';
 
 const { Dragger } = Upload;
@@ -54,6 +59,21 @@ export function DocumentsPage() {
     }
   };
 
+  const removeDocument = async (id: string) => {
+    setLoading(true);
+    try {
+      await deleteDocument(id);
+      if (detail?.id === id) {
+        setDrawerOpen(false);
+        setDetail(null);
+      }
+      await loadDocuments();
+      message.success('文档已删除');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div>
       <PageHeader title="文档管理" subtitle="上传教材后，系统会自动记录并生成简化切片。" />
@@ -80,9 +100,21 @@ export function DocumentsPage() {
             {
               title: '操作',
               render: (_, record) => (
-                <Button type="link" onClick={() => void openDetail(record.id)}>
-                  查看
-                </Button>
+                <Space>
+                  <Button type="link" onClick={() => void openDetail(record.id)}>
+                    查看
+                  </Button>
+                  <Popconfirm
+                    title="确认删除该文档？"
+                    okText="删除"
+                    cancelText="取消"
+                    onConfirm={() => void removeDocument(record.id)}
+                  >
+                    <Button danger type="link">
+                      删除
+                    </Button>
+                  </Popconfirm>
+                </Space>
               )
             }
           ]}

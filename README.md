@@ -73,6 +73,7 @@ Vite 已配置代理：`/api -> http://127.0.0.1:8000`。
 - `POST /api/documents/upload`
 - `GET /api/documents`
 - `GET /api/documents/{document_id}`
+- `DELETE /api/documents/{document_id}`
 - `POST /api/chat/ask`
 - `POST /api/teaching/create-plan`
 - `POST /api/exam/generate`
@@ -85,6 +86,6 @@ Vite 已配置代理：`/api -> http://127.0.0.1:8000`。
 后端支持 `DeepSeek/OpenAI/智谱` 三类配置：
 
 - `.env` 中配置 API Key 与 Base URL
-- 前端“模型配置”页面可更新当前默认模型（落盘于 `backend/data/model_config.json`）
+- 前端“模型配置”页面可直接更新默认模型、API Key、Base URL（运行时配置，落盘于 `backend/data/model_config.json`）
 
 若未配置任何 API Key，答疑与备课接口会返回内置示例结果，便于本地联调。

@@ -39,6 +39,12 @@ export interface TeachingPlanResponse {
 
 export interface ModelConfig {
   default_llm_model: string;
+  deepseek_api_key: string;
+  deepseek_base_url: string;
+  openai_api_key: string;
+  openai_base_url: string;
+  zhipu_api_key: string;
+  zhipu_base_url: string;
   configured_providers: {
     deepseek: boolean;
     openai: boolean;
@@ -60,4 +66,14 @@ export interface ExamGenerateResponse {
   questions: ExamQuestion[];
   latex_content: string;
   download_url: string;
+}
+
+export interface ExamListItem {
+  id: string;
+  title: string;
+  knowledge_points: string;
+  difficulty: string;
+  total_score: number;
+  paper_type: string;
+  created_at: string;
 }

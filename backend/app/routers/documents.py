@@ -39,6 +39,11 @@ class DocumentDetail(DocumentItem):
     chunk_count: int
 
 
+class DeleteDocumentResponse(BaseModel):
+    success: bool
+    message: str
+
+
 @router.post("/upload", response_model=UploadDocumentResponse, summary="上传文档")
 async def upload_document(
     file: UploadFile = File(...),
@@ -81,3 +86,13 @@ async def get_document(
         raise HTTPException(status_code=404, detail="文档不存在")
     return DocumentDetail(**doc)
 
+
+@router.delete("/{document_id}", response_model=DeleteDocumentResponse, summary="删除文档")
+async def delete_document(
+    document_id: str,
+    store: DocumentStore = Depends(get_document_store),
+) -> DeleteDocumentResponse:
+    ok = await store.delete_document(document_id)
+    if not ok:
+        raise HTTPException(status_code=404, detail="文档不存在")
+    return DeleteDocumentResponse(success=True, message="文档已删除")

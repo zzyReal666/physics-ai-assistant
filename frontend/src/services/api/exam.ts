@@ -1,5 +1,5 @@
 import { apiClient } from './client';
-import type { ExamGenerateResponse } from '../../types';
+import type { ExamGenerateResponse, ExamListItem } from '../../types';
 
 export async function generateExam(payload: {
   knowledge_points: string;
@@ -9,6 +9,11 @@ export async function generateExam(payload: {
   paper_type: string;
 }) {
   const { data } = await apiClient.post<ExamGenerateResponse>('/exam/generate', payload);
+  return data;
+}
+
+export async function fetchExamList() {
+  const { data } = await apiClient.get<ExamListItem[]>('/exam');
   return data;
 }
 

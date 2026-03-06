@@ -37,6 +37,16 @@ class ExamGenerateResponse(BaseModel):
     download_url: str
 
 
+class ExamListItem(BaseModel):
+    id: str
+    title: str
+    knowledge_points: str
+    difficulty: str
+    total_score: int
+    paper_type: str
+    created_at: str
+
+
 def _build_exam(req: ExamGenerateRequest) -> tuple[str, list[ExamQuestion], str]:
     title = f"{req.knowledge_points}-{req.difficulty}难度-{req.paper_type}"
     questions = [
@@ -103,6 +113,12 @@ async def generate_exam(
         latex_content=latex,
         download_url=f"/api/exam/{exam['id']}/download?format=latex",
     )
+
+
+@router.get("/", response_model=list[ExamListItem], summary="试卷列表")
+async def list_exams(store: ExamStore = Depends(get_exam_store)) -> list[ExamListItem]:
+    exams = store.list_exams()
+    return [ExamListItem(**exam) for exam in exams]
 
 
 @router.get("/{exam_id}/download", summary="下载试卷")

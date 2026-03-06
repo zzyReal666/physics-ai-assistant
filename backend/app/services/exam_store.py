@@ -32,6 +32,10 @@ class ExamStore:
                 return exam
         return None
 
+    def list_exams(self) -> list[dict[str, Any]]:
+        exams = self._read()
+        return sorted(exams, key=lambda x: x.get("created_at", ""), reverse=True)
+
     def _read(self) -> list[dict[str, Any]]:
         try:
             data = json.loads(self._file.read_text(encoding="utf-8") or "[]")
@@ -41,4 +45,3 @@ class ExamStore:
 
     def _write(self, data: list[dict[str, Any]]) -> None:
         self._file.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
-

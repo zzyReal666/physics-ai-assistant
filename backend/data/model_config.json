@@ -1,1 +1,9 @@
-{}
+{
+  "default_llm_model": "deepseek-chat",
+  "deepseek_api_key": "sk-5e12f071a362400a8f6d58ba315f328f",
+  "deepseek_base_url": "https://api.deepseek.com/v1",
+  "openai_api_key": "",
+  "openai_base_url": "https://api.openai.com/v1",
+  "zhipu_api_key": "",
+  "zhipu_base_url": "https://open.bigmodel.cn/api/paas/v4"
+}

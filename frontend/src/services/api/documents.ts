@@ -17,3 +17,10 @@ export async function fetchDocumentDetail(id: string) {
   const { data } = await apiClient.get<DocumentDetail>(`/documents/${id}`);
   return data;
 }
+
+export async function deleteDocument(id: string) {
+  const { data } = await apiClient.delete<{ success: boolean; message: string }>(
+    `/documents/${id}`
+  );
+  return data;
+}

@@ -75,6 +75,27 @@ class DocumentStore:
                 return {**doc, "chunks": chunks, "chunk_count": len(chunks)}
         return None
 
+    async def delete_document(self, document_id: str) -> bool:
+        docs = await self._read_metadata()
+        target: dict[str, Any] | None = None
+        kept: list[dict[str, Any]] = []
+        for doc in docs:
+            if doc.get("id") == document_id and target is None:
+                target = doc
+            else:
+                kept.append(doc)
+
+        if not target:
+            return False
+
+        file_path = self._uploads_dir / target["stored_filename"]
+        if file_path.exists():
+            file_path.unlink()
+
+        async with aiofiles.open(self._metadata_file, "w", encoding="utf-8") as f:
+            await f.write(json.dumps(kept, ensure_ascii=False, indent=2))
+        return True
+
     async def retrieve_chunks(self, query: str, top_k: int = 3) -> list[dict[str, str]]:
         words = [w for w in re.split(r"\W+", query.lower()) if len(w) >= 2]
         docs = await self.list_documents()

@@ -21,17 +21,32 @@ class ModelConfigResponse(BaseModel):
     default_llm_model: str
     configured_providers: ProviderStatus
     candidate_models: list[str]
+    deepseek_api_key: str
+    deepseek_base_url: str
+    openai_api_key: str
+    openai_base_url: str
+    zhipu_api_key: str
+    zhipu_base_url: str
 
 
 class ModelConfigUpdateRequest(BaseModel):
     default_llm_model: str = Field(..., min_length=1)
+    deepseek_api_key: str = ""
+    deepseek_base_url: str = ""
+    openai_api_key: str = ""
+    openai_base_url: str = ""
+    zhipu_api_key: str = ""
+    zhipu_base_url: str = ""
 
 
-def _provider_status(settings: Settings) -> ProviderStatus:
+def _provider_status(settings: Settings, runtime: dict[str, str]) -> ProviderStatus:
+    deepseek_key = runtime.get("deepseek_api_key") or settings.deepseek_api_key or ""
+    openai_key = runtime.get("openai_api_key") or settings.openai_api_key or ""
+    zhipu_key = runtime.get("zhipu_api_key") or settings.zhipu_api_key or ""
     return ProviderStatus(
-        deepseek=bool(settings.deepseek_api_key),
-        openai=bool(settings.openai_api_key),
-        zhipu=bool(settings.zhipu_api_key),
+        deepseek=bool(deepseek_key),
+        openai=bool(openai_key),
+        zhipu=bool(zhipu_key),
     )
 
 
@@ -40,10 +55,11 @@ async def get_model_config(
     settings: Settings = Depends(get_settings_dep),
     store: ModelConfigStore = Depends(get_model_config_store),
 ) -> ModelConfigResponse:
-    model = store.get_model_override() or settings.default_llm_model
+    runtime = store.get_runtime_config()
+    model = runtime.get("default_llm_model") or settings.default_llm_model
     return ModelConfigResponse(
         default_llm_model=model,
-        configured_providers=_provider_status(settings),
+        configured_providers=_provider_status(settings, runtime),
         candidate_models=[
             "deepseek-chat",
             "gpt-4.1",
@@ -51,6 +67,12 @@ async def get_model_config(
             "glm-4-flash",
             "glm-4-plus",
         ],
+        deepseek_api_key=runtime.get("deepseek_api_key") or settings.deepseek_api_key or "",
+        deepseek_base_url=runtime.get("deepseek_base_url") or settings.deepseek_base_url,
+        openai_api_key=runtime.get("openai_api_key") or settings.openai_api_key or "",
+        openai_base_url=runtime.get("openai_base_url") or settings.openai_base_url,
+        zhipu_api_key=runtime.get("zhipu_api_key") or settings.zhipu_api_key or "",
+        zhipu_base_url=runtime.get("zhipu_base_url") or settings.zhipu_base_url,
     )
 
 
@@ -63,6 +85,5 @@ async def update_model_config(
     model = req.default_llm_model.strip()
     if not model:
         raise HTTPException(status_code=400, detail="模型名不能为空")
-    store.write_model_override(model)
+    store.write_runtime_config(req.model_dump())
     return await get_model_config(settings=settings, store=store)
-
