@@ -8,6 +8,7 @@ from openai import AsyncOpenAI
 
 from .config import Settings, get_settings
 from .services.document_store import DocumentStore
+from .services.exam_store import ExamStore
 from .services.model_config_store import ModelConfigStore
 
 
@@ -108,10 +109,20 @@ def get_document_store(settings: Settings = Depends(get_settings_dep)) -> Docume
     return _get_document_store_cached(settings.data_dir)
 
 
+@lru_cache(maxsize=1)
+def _get_exam_store_cached(data_dir: str) -> ExamStore:
+    return ExamStore(data_dir=data_dir)
+
+
+def get_exam_store(settings: Settings = Depends(get_settings_dep)) -> ExamStore:
+    return _get_exam_store_cached(settings.data_dir)
+
+
 __all__ = [
     "LLMClient",
     "get_llm_client",
     "get_settings_dep",
     "get_document_store",
     "get_model_config_store",
+    "get_exam_store",
 ]

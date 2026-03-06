@@ -46,3 +46,18 @@ export interface ModelConfig {
   };
   candidate_models: string[];
 }
+
+export interface ExamQuestion {
+  type: string;
+  title: string;
+  score: number;
+  answer_outline: string;
+}
+
+export interface ExamGenerateResponse {
+  exam_id: string;
+  title: string;
+  questions: ExamQuestion[];
+  latex_content: string;
+  download_url: string;
+}

@@ -75,6 +75,8 @@ Vite 已配置代理：`/api -> http://127.0.0.1:8000`。
 - `GET /api/documents/{document_id}`
 - `POST /api/chat/ask`
 - `POST /api/teaching/create-plan`
+- `POST /api/exam/generate`
+- `GET /api/exam/{exam_id}/download?format=latex`
 - `GET /api/settings/model`
 - `PUT /api/settings/model`
 

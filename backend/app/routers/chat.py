@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Literal, Optional
 
 from fastapi import APIRouter, Depends
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from app.dependencies import LLMClient, get_document_store, get_llm_client
 from app.services.document_store import DocumentStore
@@ -20,6 +20,7 @@ class ChatRequest(BaseModel):
 
 
 class ChatAnswer(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
     content: str
     model_used: Optional[str] = None
     from_llm: bool = False

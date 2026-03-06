@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Optional
 
 from fastapi import APIRouter, Depends
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from app.dependencies import LLMClient, get_llm_client
 
@@ -22,6 +22,7 @@ class TeachingPlanRequest(BaseModel):
 
 
 class TeachingPlanResponse(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
     topic: str
     plan_markdown: str
     model_used: Optional[str] = None
@@ -128,5 +129,4 @@ async def create_teaching_plan(
         from_llm=True,
         model_used=llm_client.active_model,
     )
-
 

@@ -1,6 +1,7 @@
 import {
   BookOutlined,
   DashboardOutlined,
+  FileTextOutlined,
   MessageOutlined,
   SettingOutlined,
   ToolOutlined
@@ -15,6 +16,7 @@ const items = [
   { key: '/documents', icon: <BookOutlined />, label: '文档管理' },
   { key: '/teaching', icon: <ToolOutlined />, label: '备课助手' },
   { key: '/chat', icon: <MessageOutlined />, label: 'AI 答疑' },
+  { key: '/exam', icon: <FileTextOutlined />, label: '出卷助手' },
   { key: '/settings', icon: <SettingOutlined />, label: '模型配置' }
 ];
 
