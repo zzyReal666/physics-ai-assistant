@@ -66,6 +66,8 @@ export interface ExamGenerateResponse {
   questions: ExamQuestion[];
   latex_content: string;
   download_url: string;
+  from_llm: boolean;
+  model_used?: string;
 }
 
 export interface ExamListItem {

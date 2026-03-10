@@ -38,6 +38,16 @@ class Settings(BaseSettings):
         alias="DATA_DIR",
         description="本地数据目录，包含上传文件和元数据。",
     )
+    embedding_model: str = Field(
+        default="text-embedding-3-small",
+        alias="EMBEDDING_MODEL",
+        description="可选的远端 embedding 模型名称（OpenAI 兼容）。",
+    )
+    rag_top_k: int = Field(
+        default=5,
+        alias="RAG_TOP_K",
+        description="RAG 检索默认返回文档片段数。",
+    )
 
     model_config = SettingsConfigDict(
         env_file=".env",

@@ -24,3 +24,13 @@ frontend/package-lock.json
 
 # Logs
 *.log
+
+# IDE / Editor
+.idea/
+.vscode/
+
+# General Node
+node_modules/
+
+# Env variants
+*.env.*

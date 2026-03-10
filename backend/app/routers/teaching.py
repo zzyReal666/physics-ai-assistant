@@ -1,32 +1,12 @@
 from __future__ import annotations
 
-from typing import Optional
-
 from fastapi import APIRouter, Depends
-from pydantic import BaseModel, ConfigDict, Field
 
 from app.dependencies import LLMClient, get_llm_client
+from app.models import TeachingPlanRequest, TeachingPlanResponse
 
 
 router = APIRouter()
-
-
-class TeachingPlanRequest(BaseModel):
-    topic: str = Field(..., description="备课主题/知识点，如“牛顿第二定律”")
-    class_info: str = Field(
-        ..., description="班级情况和课时信息，如“高二重点班，45分钟”"
-    )
-    requirements: Optional[str] = Field(
-        default=None, description="特殊要求，如“包含实验演示和3道典型例题”"
-    )
-
-
-class TeachingPlanResponse(BaseModel):
-    model_config = ConfigDict(protected_namespaces=())
-    topic: str
-    plan_markdown: str
-    model_used: Optional[str] = None
-    from_llm: bool = False
 
 
 SYSTEM_PROMPT_TEACHING = """
@@ -122,11 +102,18 @@ async def create_teaching_plan(
         f"特殊要求：{req.requirements or '无'}\n\n"
         "请按照系统提示的结构给出完整教案。"
     )
-    md = await llm_client.chat(SYSTEM_PROMPT_TEACHING, user_prompt)
-    return TeachingPlanResponse(
-        topic=req.topic,
-        plan_markdown=md,
-        from_llm=True,
-        model_used=llm_client.active_model,
-    )
-
+    try:
+        md = await llm_client.chat(SYSTEM_PROMPT_TEACHING, user_prompt)
+        return TeachingPlanResponse(
+            topic=req.topic,
+            plan_markdown=md,
+            from_llm=True,
+            model_used=llm_client.active_model,
+        )
+    except Exception:
+        fallback = _fallback_plan(req)
+        fallback.plan_markdown = (
+            "【提示】当前大模型调用失败，已自动切换本地教案模板。\n\n"
+            + fallback.plan_markdown
+        )
+        return fallback

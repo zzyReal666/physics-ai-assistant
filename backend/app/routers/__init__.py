@@ -1,12 +1,15 @@
 from fastapi import APIRouter
 
-from . import health, chat, teaching, documents, settings, exam
+from . import auth, chat, documents, exam, health, rag, settings, teaching, tools
 
 
 api_router = APIRouter()
 
 # 健康检查
 api_router.include_router(health.router)
+
+# 认证（占位）
+api_router.include_router(auth.router, prefix="/api/auth", tags=["auth"])
 
 # AI 答疑
 api_router.include_router(chat.router, prefix="/api/chat", tags=["chat"])
@@ -22,6 +25,12 @@ api_router.include_router(settings.router, prefix="/api/settings", tags=["settin
 
 # AI 出卷
 api_router.include_router(exam.router, prefix="/api/exam", tags=["exam"])
+
+# RAG 调试
+api_router.include_router(rag.router, prefix="/api/rag", tags=["rag"])
+
+# 工具（占位）
+api_router.include_router(tools.router, prefix="/api/tools", tags=["tools"])
 
 
 __all__ = ["api_router"]

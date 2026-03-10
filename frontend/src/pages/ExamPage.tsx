@@ -70,6 +70,10 @@ export function ExamPage() {
           <Space style={{ marginBottom: 10 }}>
             <Typography.Text strong>{result.title}</Typography.Text>
             <Tag>{result.exam_id}</Tag>
+            <Tag color={result.from_llm ? 'green' : 'gold'}>
+              {result.from_llm ? 'LLM生成' : '规则生成'}
+            </Tag>
+            {result.model_used && <Tag>{result.model_used}</Tag>}
             <Button type="link" href={downloadExamLatex(result.download_url)} target="_blank">
               下载 LaTeX
             </Button>

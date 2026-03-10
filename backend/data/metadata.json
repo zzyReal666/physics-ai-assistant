@@ -1,1 +1,103 @@
-[]
+[
+  {
+    "id": "7b78be90-73e3-4048-bde6-8d9ee3e83a8a",
+    "filename": "电磁振荡-1.3.pptx",
+    "stored_filename": "7b78be90-73e3-4048-bde6-8d9ee3e83a8a__-1.3.pptx",
+    "file_type": "pptx",
+    "file_size": 378384,
+    "status": "processed",
+    "created_at": "2026-03-06T09:22:54.923587Z"
+  },
+  {
+    "id": "e5ae39cd-d1f2-4674-9845-4965f8a46f36",
+    "filename": "热学-一轮复习-郭若男-9.4.pptx",
+    "stored_filename": "e5ae39cd-d1f2-4674-9845-4965f8a46f36__-_-_-9.4.pptx",
+    "file_type": "pptx",
+    "file_size": 5772582,
+    "status": "processed",
+    "created_at": "2026-03-06T09:22:58.119435Z"
+  },
+  {
+    "id": "96767419-3c52-4739-aefe-46876fbeb4fa",
+    "filename": "sample.pdf",
+    "stored_filename": "96767419-3c52-4739-aefe-46876fbeb4fa_sample.pdf",
+    "file_type": "pdf",
+    "file_size": 596,
+    "status": "processed",
+    "created_at": "2026-03-06T09:50:22.288605Z"
+  },
+  {
+    "id": "b8e150bf-e079-44e6-a23b-e16de01acbe6",
+    "filename": "sample.pptx",
+    "stored_filename": "b8e150bf-e079-44e6-a23b-e16de01acbe6_sample.pptx",
+    "file_type": "pptx",
+    "file_size": 28327,
+    "status": "processed",
+    "created_at": "2026-03-06T09:50:22.342081Z"
+  },
+  {
+    "id": "4cc24dbe-2bca-4e30-9acd-14ce5d84feee",
+    "filename": "rag.txt",
+    "stored_filename": "4cc24dbe-2bca-4e30-9acd-14ce5d84feee_rag.txt",
+    "file_type": "txt",
+    "file_size": 71,
+    "status": "processed",
+    "retry_count": 0,
+    "last_error": null,
+    "chunk_count": 1,
+    "created_at": "2026-03-09T06:12:09.173070Z",
+    "processed_at": "2026-03-09T06:12:09.175495Z"
+  },
+  {
+    "id": "6cd580e0-87a1-48a9-824d-b29cc5a89f88",
+    "filename": "rag2.txt",
+    "stored_filename": "6cd580e0-87a1-48a9-824d-b29cc5a89f88_rag2.txt",
+    "file_type": "txt",
+    "file_size": 44,
+    "status": "processed",
+    "retry_count": 0,
+    "last_error": null,
+    "chunk_count": 1,
+    "created_at": "2026-03-09T06:12:38.528175Z",
+    "processed_at": "2026-03-09T06:12:38.530785Z"
+  },
+  {
+    "id": "8af03f14-eb81-4868-b885-c3a0f0e261d6",
+    "filename": "a.txt",
+    "stored_filename": "8af03f14-eb81-4868-b885-c3a0f0e261d6_a.txt",
+    "file_type": "txt",
+    "file_size": 37,
+    "status": "processed",
+    "retry_count": 0,
+    "last_error": null,
+    "chunk_count": 1,
+    "created_at": "2026-03-09T06:16:29.101184Z",
+    "processed_at": "2026-03-09T06:16:29.103767Z"
+  },
+  {
+    "id": "cfad1d50-ca18-4653-b51a-5c79e09eeed6",
+    "filename": "learn_rag.txt",
+    "stored_filename": "cfad1d50-ca18-4653-b51a-5c79e09eeed6_learn_rag.txt",
+    "file_type": "txt",
+    "file_size": 65,
+    "status": "processed",
+    "retry_count": 0,
+    "last_error": null,
+    "chunk_count": 1,
+    "created_at": "2026-03-09T06:32:01.755069Z",
+    "processed_at": "2026-03-09T06:32:01.757840Z"
+  },
+  {
+    "id": "03d6c8ed-4920-4962-9cbc-bc3c9c4b0379",
+    "filename": "rag_hit.txt",
+    "stored_filename": "03d6c8ed-4920-4962-9cbc-bc3c9c4b0379_rag_hit.txt",
+    "file_type": "txt",
+    "file_size": 81,
+    "status": "processed",
+    "retry_count": 0,
+    "last_error": null,
+    "chunk_count": 1,
+    "created_at": "2026-03-09T06:39:09.241628Z",
+    "processed_at": "2026-03-09T06:39:09.244663Z"
+  }
+]
